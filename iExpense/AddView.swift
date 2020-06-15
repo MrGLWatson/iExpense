@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+extension String: Error {}
 
 struct AddView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -15,6 +16,9 @@ struct AddView: View {
     @State private var name = ""
     @State private var type = "Personal"
     @State private var amount = ""
+    @State private var showingAlert = false
+    
+    
     static let types = ["Business", "Personal"]
     
     var body: some View {
@@ -32,13 +36,25 @@ struct AddView: View {
             }
             .navigationBarTitle("Add new expense")
             .navigationBarItems(trailing: Button("Save") {
+                do {
                 if let actualAmount = Int(self.amount)
                 {
                     let item = ExpenseItem(name: self.name, type: self.type, amount: actualAmount)
                     self.expenses.items.append(item)
                     self.presentationMode.wrappedValue.dismiss()
+                } else {
+                    throw "Error"
+                    }
+                }
+                catch {
+                    self.amount = ""
+                    self.showingAlert = true
                 }
             })
+                .alert(isPresented: $showingAlert) {
+                    Alert(title: Text("Not a number"),message: Text("Enter again"), dismissButton: .default(Text("OK")))
+            
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ struct ExpenseItem: Identifiable, Codable {  // needs id variable to be unique
     let name: String
     let type: String
     let amount: Int
+    var textColorBasedOnAmount: Color { if amount <= 10 { return .green } else if amount < 100 { return .black } else { return .red } }
 }
 
 class Expenses: ObservableObject {
@@ -47,10 +48,12 @@ struct ContentView: View {
             List {
                 ForEach(expenses.items) { item in
                     HStack {
+ 
                         VStack(alignment: .leading) {
-                            Text(item.name)
+                                Text(item.name)
                                 .font(.headline)
-                            Text(item.type)
+                                    .foregroundColor(item.textColorBasedOnAmount)
+                             Text(item.type)
                         }
                         Spacer()
                         Text("$\(item.amount)")
